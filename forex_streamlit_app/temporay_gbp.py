@@ -78,7 +78,7 @@ def get_forex_data(gbpusd):
             return None
 
 # Fetch data for the stock ID entered by the user
-data = get_forex_data(gpbusd)
+data = get_forex_data(gbpusd)
 
 
 
