@@ -56,15 +56,28 @@ import yfinance as yf
 # Fetch GBP/USD forex data from 2010 to present with daily interval
 # Function to fetch GBP/USD data with caching
 today = date.today().strftime("%Y-%m-%d")
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600)  # Cache for 1 hour
 def get_forex_data():
-    gbpusd = yf.Ticker("GBPUSD=X")
-    
-    hist = gbpusd.history(start="2010-01-01", end=today, interval="1d")
-    return hist
+    try:
+        gbpusd = yf.Ticker("GBPUSD=X")
+        hist = gbpusd.history(start="2010-01-01", end=today, interval="1d")
+        return hist
+    except yf.YFRateLimitError:
+        st.error("Yahoo Finance rate limit reached. Please try again later.")
+        return None
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
 
-# Load cached data
+# Load data
 data = get_forex_data()
+
+# Check if data is available before displaying it
+if data is not None and not data.empty:
+    st.write("Data Loaded Successfully!")
+    st.write(data.head())
+else:
+    st.warning("No data available to display.")
 
 #renamimg columns
 
