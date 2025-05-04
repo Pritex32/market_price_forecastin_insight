@@ -1,0 +1,7 @@
+[theme]
+base="light"
+primaryColor="#8B4513"         # SaddleBrown (primary accent)
+backgroundColor="#F5F5DC"      # Beige background
+secondaryBackgroundColor="#DEB887"  # BurlyWood for sidebar or cards
+textColor="#4B3832"            # Dark Brown for text
+font="sans serif"
