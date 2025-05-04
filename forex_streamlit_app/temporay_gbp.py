@@ -72,9 +72,9 @@ def get_forex_data(gbpusd):
         if "429" in str(e):  # Check for rate limit error
             st.warning("Too many requests! Waiting for 10 seconds...")
             time.sleep(10)  # Sleep for 10 seconds before retrying
-            return get_forex_data(stock_id)  # Retry fetching data
+            return get_forex_data(gbpusd)  # Retry fetching data
         else:
-            st.error(f"Error fetching data for {stock_id}: {e}")
+            st.error(f"Error fetching data for {gbpusd}: {e}")
             return None
 
 # Fetch data for the stock ID entered by the user
