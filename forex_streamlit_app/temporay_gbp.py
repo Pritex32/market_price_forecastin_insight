@@ -59,39 +59,22 @@ today = date.today().strftime("%Y-%m-%d")
 
 
 # Use Streamlit caching
-@st.cache_data(ttl=3600)  # Cache for 1 hour
-def get_forex_data():
-    try:
-        gbpusd = yf.Ticker("GBPUSD=X")
-        hist = gbpusd.history(start="2010-01-01", end=today, interval="1d")
-        return hist
-    except Exception as e:
-        if 'Rate limit' in str(e):
-            st.error("Yahoo Finance API rate limit reached. Please try again later.")
-        else:
-            st.error(f"An error occurred: {e}")
-        return None
+@st.cache_resource(ttl=3600)
+def get_forex_data_with_retry(ticker, retries=5, delay=60):
+    attempt = 0
+    while attempt < retries:
+        try:
+            data = yf.Ticker(ticker).history(period="1y")  # Adjust period as necessary
+            return data
+        except yf.YFRateLimitError:
+            attempt += 1
+            st.warning(f"Yahoo Finance API rate limit reached. Retrying... (Attempt {attempt}/{retries})")
+            time.sleep(delay)  # Delay for a specified number of seconds
+    st.error("Failed to load data after several attempts.")
+    return None
 
-# Load data with retries to handle rate limits
-data = None
-max_retries = 5
-retries = 0
-wait_time = 5  # Initial wait time in seconds
-
-while data is None and retries < max_retries:
-    data = get_forex_data()
-    if data is None:
-        retries += 1
-        st.warning(f"Retrying to fetch data... (Attempt {retries}/{max_retries})")
-        time.sleep(wait_time)  # Wait before retrying
-        wait_time *= 2  # Double the wait time for each retry
-
-# Check if data is available before displaying it
-if data is not None and not data.empty:
-    st.write("Data Loaded Successfully!")
-    st.write(data.head())
-else:
-    st.warning("Failed to load data after several attempts.")
+# Example usage:
+data = get_forex_data_with_retry("GBPUSD=X")
 
 
 
