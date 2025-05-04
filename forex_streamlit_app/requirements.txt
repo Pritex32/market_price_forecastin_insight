@@ -10,6 +10,6 @@ plotly==6.0.0
 scikit-learn==1.6.1
 seaborn==0.13.2
 statsmodels==0.14.4
-streamlit==1.32.0
+streamlit==1.41.0
 tensorflow==2.10.0
 yfinance==0.2.54
