@@ -60,21 +60,14 @@ today = date.today().strftime("%Y-%m-%d")
 
 # Use Streamlit caching
 @st.cache_resource(ttl=3600)
-def get_forex_data_with_retry(ticker, retries=5, delay=60):
-    attempt = 0
-    while attempt < retries:
-        try:
-            data = yf.Ticker(ticker).history(period="1y")  # Adjust period as necessary
-            return data
-        except yf.YFRateLimitError:
-            attempt += 1
-            st.warning(f"Yahoo Finance API rate limit reached. Retrying... (Attempt {attempt}/{retries})")
-            time.sleep(delay)  # Delay for a specified number of seconds
-    st.error("Failed to load data after several attempts.")
-    return None
+def get_forex_data():
+    gbpusd = yf.Ticker("GBPUSD=X")
+    
+    hist = gbpusd.history(start="2010-01-01", end=today, interval="1d")
+    return hist
 
-# Example usage:
-data = get_forex_data_with_retry("GBPUSD=X")
+# Load cached data
+data = get_forex_data()
 
 
 
