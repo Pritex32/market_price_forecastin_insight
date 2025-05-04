@@ -60,14 +60,14 @@ today = date.today().strftime("%Y-%m-%d")
 
 # Use Streamlit caching
 @st.cache_resource(ttl=3600)
-def get_forex_data():
+def get_forex_data (time.sleep(2)):
     gbpusd = yf.Ticker("GBPUSD=X")
     
     hist = gbpusd.history(start="2010-01-01", end=today, interval="1d")
     return hist
 
 # Load cached data
-data = get_forex_data()
+data = get_forex_data( time.sleep(2))
 
 
 
@@ -123,7 +123,7 @@ data.drop_duplicates(inplace=True)
 ## convert date to index
 
 # Convert the index to datetime
-data.index = pd.to_datetime(data.index)
+
 # Convert the index to datetime
 
 
