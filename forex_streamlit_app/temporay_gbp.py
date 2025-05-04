@@ -31,7 +31,7 @@ col1,col2=st.columns(2)
 with col1:
      st.title('Pritex32 Market Price Forecasting insight') 
 with col2:
-     image='C:\\Users\\USER\\Documents\\vscode\\forex_streamlit_app\\trading chart image.jfif'
+     image='trading chart image.jfif'
      img = Image.open(image)          # load the image
      img = img.resize((100, 100))         # resize the image
      st.image(img)  
