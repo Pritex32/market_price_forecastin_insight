@@ -59,23 +59,30 @@ today = date.today().strftime("%Y-%m-%d")
 
 
 # Use Streamlit caching
-@st.cache_resource(ttl=3600)
+@st.cache_resource(ttl=86400)
 def get_forex_data(gbpusd):
-    try:
-        # Create the Ticker object for the given stock
-        ticker = yf.Ticker(gbpusd)
-        
-        # Fetch historical data (from 2010 to present with daily intervals)
-        hist = ticker.history(start="2010-01-01", end=today, interval="1d")
-        return hist
-    except Exception as e:
-        if "429" in str(e):  # Check for rate limit error
-            st.warning("Too many requests! Waiting for 10 seconds...")
-            time.sleep(10)  # Sleep for 10 seconds before retrying
-            return get_forex_data(gbpusd)  # Retry fetching data
-        else:
-            st.error(f"Error fetching data for {gbpusd}: {e}")
-            return None
+    attempt = 0  # Track the number of retry attempts
+    max_attempts = 5  # Limit the number of retries
+    
+    while attempt < max_attempts:
+        try:
+            # Create the Ticker object for the given stock
+            ticker = yf.Ticker(gbpusd)
+            
+            # Fetch historical data (from 2010 to present with daily intervals)
+            hist = ticker.history(start="2010-01-01", end=today, interval="1d")
+            return hist
+        except Exception as e:
+            if "429" in str(e):  # Check for rate limit error
+                attempt += 1
+                st.warning(f"Too many requests! Waiting for {attempt * 10} seconds... (Attempt {attempt}/{max_attempts})")
+                time.sleep(attempt * 10)  # Gradually increase wait time between retries
+            else:
+                st.error(f"Error fetching data for {gbpusd}: {e}")
+                return None
+    
+    st.error("Max retries reached. Unable to fetch data.")
+    return None
 
 # Fetch data for the stock ID entered by the user
 data = get_forex_data(gbpusd)
