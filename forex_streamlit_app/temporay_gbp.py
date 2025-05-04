@@ -74,15 +74,17 @@ def get_forex_data():
 
 # Load data with retries to handle rate limits
 data = None
-max_retries = 3
+max_retries = 5
 retries = 0
+wait_time = 5  # Initial wait time in seconds
 
 while data is None and retries < max_retries:
     data = get_forex_data()
     if data is None:
         retries += 1
-        st.warning("Retrying to fetch data...")
-        time.sleep(5)  # Wait before retrying
+        st.warning(f"Retrying to fetch data... (Attempt {retries}/{max_retries})")
+        time.sleep(wait_time)  # Wait before retrying
+        wait_time *= 2  # Double the wait time for each retry
 
 # Check if data is available before displaying it
 if data is not None and not data.empty:
@@ -90,7 +92,6 @@ if data is not None and not data.empty:
     st.write(data.head())
 else:
     st.warning("Failed to load data after several attempts.")
-
 
 
 
