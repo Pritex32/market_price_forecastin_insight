@@ -56,7 +56,7 @@ import yfinance as yf
 # Fetch GBP/USD forex data from 2010 to present with daily interval
 # Function to fetch GBP/USD data with caching
 today = date.today().strftime("%Y-%m-%d")
-@st.cache_data
+@st.cache_data(ttl=3600)
 def get_forex_data():
     gbpusd = yf.Ticker("GBPUSD=X")
     
